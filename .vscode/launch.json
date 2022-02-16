@@ -1,0 +1,38 @@
+// launch.json contains information needed for the debugger to attach to  processes
+// See https://code.visualstudio.com/Docs/editor/debugging#_launch-configurations
+// for documentation about how to create and manage configurations
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "command": "mvn spring-boot:run",
+      "name": "Run Project",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    { // TODO: this config should be changed
+      "command": "mvn spring-boot:run -Drun.jvmArguments='-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y'",
+      "name": "Debug Project",
+      "request": "attach",
+      "type": "java",
+      "hostName": "localhost",
+      "port": 8000
+    },
+    { // TODO: this config should be changed
+      "type": "java",
+      "name": "Run Project 2",
+      "request": "launch",
+      "mainClass": "cloudcode.helloworld.HelloWorldApplication",
+      "vmArgs": []
+    },
+    {
+      "name": "Run on Kubernetes",
+      "type": "cloudcode.kubernetes",
+      "request": "launch",
+      "skaffoldConfig": "${workspaceFolder}/skaffold.yaml",
+      "watch": true,
+      "cleanUp": true,
+      "portForward": true
+    }
+  ]
+}
