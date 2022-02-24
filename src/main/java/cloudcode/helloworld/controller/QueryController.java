@@ -97,23 +97,22 @@ public class QueryController {
 
     TableResult results = bigQuery.query(config);
 
-    List<CovidDto> covids = new ArrayList<CovidDto>();
+    List<Object> objs = new ArrayList<Object>();
 
-    // for (FieldValueList row : results.getValues()) {
-    // String location = row.get(0).getStringValue();
-    // String date = row.get(1).getStringValue();
-    // String variant = row.get(2).getStringValue();
-    // int numSequences = row.get(3).getNumericValue().intValue();
-    // double percSequences = row.get(4).getDoubleValue();
-    // int numSequencesTotal = row.get(5).getNumericValue().intValue();
-
-    // covids.add(new CovidDto(location, date, variant, numSequences, percSequences,
-    // numSequencesTotal));
-    // }
+    for (FieldValueList row : results.getValues()) {
+      CovidDto covidDto = new CovidDto();
+      covidDto.setLocation(row.get(0).getStringValue());
+      covidDto.setDate(row.get(1).getStringValue());
+      covidDto.setVariant(row.get(2).getStringValue());
+      covidDto.setNum_sequences(row.get(3).getNumericValue().intValue());
+      covidDto.setPerc_sequences(row.get(4).getDoubleValue());
+      covidDto.setNum_sequences_total(row.get(5).getNumericValue().intValue());
+      objs.add(covidDto);
+    }
 
     LOGGER.info("[TABLE METHOD] Execution took in seconds: " + stopWatch.getElapsedTime());
 
-    return ResponseEntity.ok(covids);
+    return ResponseEntity.ok(objs);
   }
 
 }
