@@ -31,75 +31,72 @@ import org.springframework.util.concurrent.ListenableFuture;
 @Configuration
 public class BigQuerySampleConfiguration {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BigQuerySampleConfiguration.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(BigQuerySampleConfiguration.class);
 
-    @Value("${GOOGLE_APPLICATION_CREDENTIALS}")
-    private String credentialJsonPath;
+  @Value("${GOOGLE_APPLICATION_CREDENTIALS}")
+  private String credentialJsonPath;
 
-    @Value("${spring.cloud.gcp.project-id}")
-    private String projectId;
+  @Value("${spring.cloud.gcp.project-id}")
+  private String projectId;
 
-    @Bean
-    public BigQuery createBigQueryBean() {
-        GoogleCredentials credentials;
-        try {
-            InputStream in = new FileInputStream(credentialJsonPath);
-            credentials = ServiceAccountCredentials.fromStream(in);
+  @Bean
+  public BigQuery createBigQueryBean() {
+    GoogleCredentials credentials;
+    try {
+      InputStream in = new FileInputStream(credentialJsonPath);
+      credentials = ServiceAccountCredentials.fromStream(in);
 
-            BigQuery bigQuery = BigQueryOptions.newBuilder()
-                    .setCredentials(credentials)
-                    .setProjectId(projectId)
-                    .build()
-                    .getService();
+      BigQuery bigQuery = BigQueryOptions.newBuilder().setCredentials(credentials)
+          .setProjectId(projectId).build().getService();
 
-            LOGGER.info("BigQuery Service is ready !!");
+      LOGGER.info("BigQuery Service is ready !!");
 
-            return bigQuery;
-        } catch (Exception io) {
-            LOGGER.warn("Credentials/ProjectId is wrong!!");
-            io.printStackTrace();
-        }
-
-        return BigQueryOptions.getDefaultInstance().getService();
+      return bigQuery;
+    } catch (Exception io) {
+      LOGGER.warn("Credentials/ProjectId is wrong!!");
+      io.printStackTrace();
     }
 
-    @Bean
-    public DirectChannel bigQueryWriteDataChannel() {
-        return new DirectChannel();
-    }
+    return BigQueryOptions.getDefaultInstance().getService();
+  }
 
-    @Bean
-    public DirectChannel bigQueryJobReplyChannel() {
-        return new DirectChannel();
-    }
+  @Bean
+  public DirectChannel bigQueryWriteDataChannel() {
+    return new DirectChannel();
+  }
 
-    @Bean
-    @ServiceActivator(inputChannel = "bigQueryWriteDataChannel")
-    public MessageHandler messageSender(BigQueryTemplate bigQueryTemplate) {
-        BigQueryFileMessageHandler messageHandler = new BigQueryFileMessageHandler(bigQueryTemplate);
-        messageHandler.setFormatOptions(FormatOptions.csv());
-        messageHandler.setOutputChannel(bigQueryJobReplyChannel());
-        return messageHandler;
-    }
+  @Bean
+  public DirectChannel bigQueryJobReplyChannel() {
+    return new DirectChannel();
+  }
 
-    @Bean
-    public GatewayProxyFactoryBean gatewayProxyFactoryBean() {
-        GatewayProxyFactoryBean factoryBean = new GatewayProxyFactoryBean(BigQueryFileGateway.class);
-        factoryBean.setDefaultRequestChannel(bigQueryWriteDataChannel());
-        factoryBean.setDefaultReplyChannel(bigQueryJobReplyChannel());
-        // Ensures that BigQueryFileGateway does not return double-wrapped
-        // ListenableFutures
-        factoryBean.setAsyncExecutor(null);
-        return factoryBean;
-    }
+  @Bean
+  @ServiceActivator(inputChannel = "bigQueryWriteDataChannel")
+  public MessageHandler messageSender(BigQueryTemplate bigQueryTemplate) {
+    BigQueryFileMessageHandler messageHandler = new BigQueryFileMessageHandler(bigQueryTemplate);
+    messageHandler.setFormatOptions(FormatOptions.csv());
+    messageHandler.setOutputChannel(bigQueryJobReplyChannel());
+    return messageHandler;
+  }
 
-    /**
-     * Spring Integration gateway which allows sending data to load to BigQuery
-     * through a channel.
-     */
-    @MessagingGateway
-    public interface BigQueryFileGateway {
-        ListenableFuture<Job> writeToBigQueryTable(
-                byte[] csvData, @Header(BigQuerySpringMessageHeaders.TABLE_NAME) String tableName);
-    }
+  @Bean
+  public GatewayProxyFactoryBean gatewayProxyFactoryBean() {
+    GatewayProxyFactoryBean factoryBean = new GatewayProxyFactoryBean(BigQueryFileGateway.class);
+    factoryBean.setDefaultRequestChannel(bigQueryWriteDataChannel());
+    factoryBean.setDefaultReplyChannel(bigQueryJobReplyChannel());
+    // Ensures that BigQueryFileGateway does not return double-wrapped
+    // ListenableFutures
+    factoryBean.setAsyncExecutor(null);
+    return factoryBean;
+  }
+
+  /**
+   * Spring Integration gateway which allows sending data to load to BigQuery
+   * through a channel.
+   */
+  @MessagingGateway
+  public interface BigQueryFileGateway {
+    ListenableFuture<Job> writeToBigQueryTable(byte[] csvData,
+        @Header(BigQuerySpringMessageHeaders.TABLE_NAME) String tableName);
+  }
 }

@@ -2,6 +2,7 @@ package cloudcode.helloworld.payload.response;
 
 public class CovidDto {
 
+  // @JsonInclude(JsonInclude.Include.NON_NULL)
   private String location;
 
   private String date;
@@ -14,14 +15,7 @@ public class CovidDto {
 
   private int numSequencesTotal;
 
-  public CovidDto(String location, String date, String variant, int numSequences, double percSequences,
-      int numSequencesTotal) {
-    this.location = location;
-    this.date = date;
-    this.variant = variant;
-    this.numSequences = numSequences;
-    this.percSequences = percSequences;
-    this.numSequencesTotal = numSequencesTotal;
+  public CovidDto() {
   }
 
   public String getLocation() {

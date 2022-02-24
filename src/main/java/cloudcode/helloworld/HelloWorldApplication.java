@@ -12,13 +12,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class HelloWorldApplication {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HelloWorldApplication.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(HelloWorldApplication.class);
 
-    public static void main(final String[] args) throws Exception {
-        String port = System.getenv("PORT");
-        if (port == null) {
-            LOGGER.warn("$PORT environment variable not set");
-        }
-        SpringApplication.run(HelloWorldApplication.class, args);
+  public static void main(final String[] args) throws Exception {
+    String port = System.getenv("PORT");
+    if (port == null) {
+      LOGGER.warn("$PORT environment variable not set");
     }
+    SpringApplication.run(HelloWorldApplication.class, args);
+  }
 }

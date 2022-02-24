@@ -18,7 +18,7 @@ public class StopWatch {
   /**
    * Gets the elapsed time (in seconds) since the time the object of StopWatch was
    * initialized.
-   * 
+   *
    * @return Elapsed time in seconds.
    */
   public double getElapsedTime() {

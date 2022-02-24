@@ -10,10 +10,10 @@ import cloudcode.helloworld.payload.response.MessageResponse;
 @RestController
 public final class HelloWorldController {
 
-    @GetMapping("/hello")
-    public ResponseEntity<?> helloWorld() {
-        String message = "Hello World!";
-        return ResponseEntity.ok(new MessageResponse(message));
-    }
+  @GetMapping("/hello")
+  public ResponseEntity<?> helloWorld() {
+    String message = "Hello World!";
+    return ResponseEntity.ok(new MessageResponse(message));
+  }
 
 }
