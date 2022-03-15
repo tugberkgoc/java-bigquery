@@ -44,7 +44,7 @@ public class QueryController {
   @Autowired
   private BigQuery bigQuery;
 
-  @GetMapping("/all-table")
+  @GetMapping("/table-method")
   public ResponseEntity<?> getAllWithUsingTable(
       @RequestParam(required = true, value = "limit") String limit,
       @RequestParam(required = true, value = "offset") String offset,
@@ -85,8 +85,8 @@ public class QueryController {
     return ResponseEntity.ok(testObject);
   }
 
-  @RequestMapping(value = "/query-table", method = RequestMethod.GET, produces = "application/json")
-  public ResponseEntity<?> queryTableReturnJson(
+  @RequestMapping(value = "/query-method", method = RequestMethod.GET, produces = "application/json")
+  public ResponseEntity<?> queryMethod(
       @RequestParam(required = true, value = "limit") String limit,
       @RequestParam(required = true, value = "offset") String offset,
       @RequestParam(required = true, value = "fields") String fields)
